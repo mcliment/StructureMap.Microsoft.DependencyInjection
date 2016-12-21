@@ -25,11 +25,19 @@ namespace StructureMap.AspNetCore.Sample
         {
             // Add framework services.
             services.AddMvc();
+
+            services.Configure<MySettings>(Configuration.GetSection("MySettings"));
         }
 
         // This method gets called by the runtime. Use this method to add services, using StructureMap-specific APIs.
         public void ConfigureContainer(Registry registry)
         {
+            registry.Scan(a =>
+            {
+                a.AssemblyContainingType<IMySettingsWrapper>();
+                a.Include(t => t.Name == "MySettingsWrapper"); // Just the one I need for testing
+                a.WithDefaultConventions();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
